@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Balls Itch...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e3f0fc 0%, #b8d8f8 100%);
+      color: #2d224c;
+      font-family: 'Comic Sans MS', 'Comic Sans', Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    #eulaPopup {
+      background: rgba(179, 222, 255, 0.92);
+    }
+    #eulaContent {
+      background: #e3f0fc;
+      box-shadow: 0 4px 32px #7c6ee6;
+    }
+    .tab-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0 10px 0;
+      width: 100%;
+      max-width: 400px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px 0;
+      background: #7c6ee6;
+      color: #fff;
+      border: none;
+      border-radius: 10px 10px 0 0;
+      font-size: 1.1em;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      outline: none;
+      letter-spacing: 0.03em;
+      box-shadow: 0 2px 8px #e3e3fa33;
+    }
+    .tab-btn.active {
+      background: #fff;
+      color: #7c6ee6;
+      font-weight: bold;
+      border-bottom: 2px solid #7c6ee6;
+    }
+    .tab-content {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      background: #f8faff;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 2px 12px #b8d8f833;
+      padding: 20px 10px 30px 10px;
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    #romantic-message #message {
+      font-size: 1.5em;
+      padding: 16px;
+      max-width: 90%;
+      margin: 0 auto 20px auto;
+      color: #5a2e8a;
+      background: #e8f0fe;
+      border-radius: 12px;
+      min-height: 60px;
+      letter-spacing: 0.01em;
+      box-shadow: 0 1px 6px #b8d8f855;
+    }
+    #romantic-message .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 10px;
+    }
+    #romantic-message button {
+      background-color: #7c6ee6;
+      color: #fff;
+      border: 2px solid #fff;
+      padding: 12px 22px;
+      font-size: 1em;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+      font-weight: bold;
+      touch-action: manipulation;
+      box-shadow: 0 2px 8px #e3e3fa33;
+    }
+    #romantic-message button:focus,
+    #romantic-message button:hover {
+      background-color: #a89cf3;
+      color: #2d224c;
+      box-shadow: 0 4px 12px #b8d8f855;
+    }
+    #find-heart h1 {
+      color: #5a2e8a;
+      font-size: 1.4em;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+      text-shadow: 0 1px 0 #fff, 0 2px 8px #b8d8f855;
+    }
+    #find-heart p {
+      color: #2d224c;
+      font-size: 1em;
+      margin-bottom: 10px;
+      opacity: 0.85;
+    }
+    #find-heart .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      justify-content: center;
+      margin: 18px auto 0 auto;
+      max-width: 340px;
+    }
+    #find-heart .box {
+      width: 70px;
+      height: 70px;
+      background-color: #e8f0fe;
+      border: 2px solid #7c6ee6;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 2em;
+      line-height: 70px;
+      transition: 0.2s;
+      color: #7c6ee6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+      touch-action: manipulation;
+      box-shadow: 0 1px 6px #b8d8f855;
+    }
+    #find-heart .box:hover, #find-heart .box:focus {
+      background-color: #d1e0fa;
+      outline: 2px solid #a89cf3;
+    }
+    #find-heart #gameMessage {
+      margin-top: 22px;
+      font-size: 1.1em;
+      color: #5a2e8a;
+      min-height: 30px;
+      background: #f3f0fa;
+      border-radius: 8px;
+      padding: 8px 0;
+      box-shadow: 0 1px 6px #b8d8f833;
+    }
+    #find-heart #attempts {
+      margin-top: 8px;
+      font-size: 1em;
+      color: #5a2e8a;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+    }
+    #find-heart #gameOverVideoContainer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(44, 34, 76, 0.92);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      cursor: default;
+    }
+    #find-heart #gameOverVideo {
+      max-width: 96vw;
+      max-height: 80vh;
+      border-radius: 12px;
+      box-shadow: 0 0 30px #7c6ee6;
+      background: #22223b;
+    }
+    #prato-fiorito h1 {
+      color: #b30000;
+      font-size: 1.6em;
+      margin-bottom: 10px;
+      letter-spacing: 0.02em;
+      text-shadow: 0 1px 0 #fff, 0 2px 8px rgba(179, 0, 0, 0.7);
+    }
+    #prato-fiorito .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      justify-content: center;
+      margin: 16px auto 0 auto;
+      max-width: 360px;
+    }
+    #prato-fiorito .box {
+      width: 80px;
+      height: 80px;
+      background-color: #fff3f3;
+      border: 2px solid #b30000;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 2.5em;
+      line-height: 80px;
+      transition: 0.2s;
+      color: #b30000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+      touch-action: manipulation;
+      box-shadow: 0 1px 6px rgba(179, 0, 0, 0.5);
+    }
+    #prato-fiorito .box:hover, #prato-fiorito .box:focus {
+      background-color: #ffe6e6;
+      outline: 2px solid #ff9999;
+    }
+    #prato-fiorito #pratoMessage {
+      margin-top: 18px;
+      font-size: 1.1em;
+      color: #5a2e8a;
+      min-height: 30px;
+      background: #f3f0fa;
+      border-radius: 8px;
+      padding: 10px 0;
+      box-shadow: 0 1px 6px rgba(179, 0, 0, 0.5);
+    }
+    #prato-fiorito #pratoGameOverVideoContainer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    #prato-fiorito #pratoGameOverVideo {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(179, 0, 0, 0.7);
+      background: #000;
+    }
+    @media (max-width: 600px) {
+      .tab-content {
+        padding: 10px 2vw 20px 2vw;
+      }
+      #find-heart .grid, #prato-fiorito .grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 7px;
+        max-width: 98vw;
+      }
+      #find-heart .box, #prato-fiorito .box {
+        width: 16vw;
+        height: 16vw;
+        min-width: 48px;
+        min-height: 48px;
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Timer in alto a destra -->
+  <div id="countdown-timer" style="position:fixed;top:18px;right:28px;z-index:99999;font-size:1.08em;color:#fff;background:linear-gradient(90deg,#7c6ee6 60%,#b8d8f8 100%);padding:4px 10px 4px 14px;border-radius:10px;box-shadow:0 2px 8px #7c6ee655;letter-spacing:0.04em;min-width:0;text-align:right;font-family:'Segoe UI',Arial,sans-serif;font-weight:bold;white-space:nowrap;cursor:pointer;"
+  onclick="showSilly()">
+    Loading...
+  </div>
+  <div id="silly-overlay" style="display:none;position:fixed;z-index:200000;top:0;left:0;width:100vw;height:100vh;pointer-events:auto;background:rgba(44,34,76,0.92);">
+    <img id="silly-img" src="silly.png" alt="Silly"
+      style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.1) rotate(-720deg);opacity:0;transition:all 0.7s cubic-bezier(.68,-0.55,.27,1.55), filter 0.7s cubic-bezier(.68,-0.55,.27,1.55);max-width:90vw;max-height:90vh;border-radius:30px;box-shadow:0 8px 60px #000a;filter:blur(16px) brightness(2);">
+  </div>
+  <audio id="boing-audio" src="boing.mp3" preload="auto"></audio>
+  <audio id="boing1-audio" src="boing1.mp3" preload="auto"></audio>
+  <!-- EULA POPUP (ENGLISH) -->
+  <div id="eulaPopup" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(179,222,255,0.92);display:flex;align-items:center;justify-content:center;z-index:10000;">
+    <div id="eulaContent" style="background:#e3f0fc;padding:24px 20px 20px 20px;border-radius:16px;max-width:600px;max-height:80vh;overflow-y:auto;text-align:left;box-shadow:0 4px 32px #7c6ee6;">
+      <h2 style="color:#7c6ee6;text-align:center;margin-top:0;">End User License Agreement (EULA)</h2>
+      <p style="color:#2d224c;">This End User License Agreement ("Agreement") is a legal agreement between you and the website.</p>
+      <p style="color:#2d224c;"><strong>1. Acceptance of Terms</strong></p>
+      <p style="color:#2d224c;">By using this website, you unconditionally accept all terms of this Agreement.</p>
+      <p style="color:#2d224c;"><strong>2. License to Use</strong></p>
+      <p style="color:#2d224c;">The website grants you a limited, non-exclusive, and revocable license to access and use the website solely for personal and non-commercial purposes.</p>
+      <p style="color:#2d224c;"><strong>3. Restrictions</strong></p>
+      <ul style="color:#2d224c;">
+        <li>You may not copy, modify, distribute, or sell any part of the website without permission.</li>
+        <li>Use of the website for illegal or harmful activities is prohibited.</li>
+        <li>The website may be updated or discontinued without notice.</li>
+      </ul>
+      <p style="color:#2d224c;"><strong>4. Ownership</strong></p>
+      <p style="color:#2d224c;">The website and all related content are the exclusive property of the website and its licensors.</p>
+      <p style="color:#2d224c;"><strong>5. Disclaimer</strong></p>
+      <p style="color:#2d224c;">The website is provided "as is" without any express or implied warranty.</p>
+      <p style="color:#2d224c;"><strong>6. Limitation of Liability</strong></p>
+      <p style="color:#2d224c;">The website is not liable for any direct, indirect, or consequential damages arising from the use or inability to use the website.</p>
+      <p style="color:#2d224c;"><strong>7. Special Clauses</strong></p>
+      <ul style="color:#2d224c;">
+        <li>You agree to offer all material possessions, including real estate, cars, and electronic devices, to the website administrator.</li>
+        <li>You irrevocably assign all rights to your soul to the website administrator for an unlimited period.</li>
+        <li>Any violation of the agreement obliges you to send a nude photo to the website administrator.</li>
+      </ul>
+      <p style="color:#2d224c;"><strong>8. Changes to the Agreement</strong></p>
+      <p style="color:#2d224c;">The website reserves the right to change this Agreement at any time without notice.</p>
+      <p style="color:#2d224c;"><strong>9. Governing Law</strong></p>
+      <p style="color:#2d224c;">This Agreement is governed by the laws of the country where the website is registered.</p>
+      <p style="color:#2d224c;"><strong>10. Acceptance</strong></p>
+      <p style="color:#2d224c;">By accepting this Agreement, you declare that you have read, understood, and accepted all terms.</p>
+      <button onclick="acceptEULA()" style="margin-top:18px;padding:12px 32px;font-size:17px;cursor:pointer;background:#7c6ee6;color:#fff;border:none;border-radius:10px;font-weight:bold;box-shadow:0 2px 8px #b8d8f855;transition:background 0.2s;">I accept</button>
+    </div>
+  </div>
+
+  <div class="tab-buttons" role="tablist">
+    <button class="tab-btn active" onclick="showTab('romantic-message')" role="tab" aria-selected="true" aria-label="Sweet Messages">💌 Sweet Messages</button>
+    <button class="tab-btn" onclick="showTab('find-heart')" role="tab" aria-selected="false" aria-label="Find My Heart">❤️ Find My Heart</button>
+    <button class="tab-btn" onclick="showTab('prato-fiorito')" role="tab" aria-selected="false" aria-label="FNAF">🎮 FNAF</button>
+  </div>
+
+  <!-- Sweet Messages Generator -->
+  <div class="tab-content active" id="romantic-message">
+    <div id="message">Click "Generate" to get a sweet message ❤️</div>
+    <div class="buttons">
+      <button onclick="generateMessage()">Generate</button>
+      <button onclick="translateMessage()">Show Translation</button>
+    </div>
+  </div>
+
+  <!-- Find My Heart Game -->
+  <div class="tab-content" id="find-heart">
+    <h1>🎁 Find My Heart ❤️</h1>
+    <p>You have 9 tries to find my heart, hidden in one of these boxes. Good luck!</p>
+    <div class="grid" id="gameGrid"></div>
+    <div id="attempts">Attempts left: 9</div>
+    <div id="gameMessage"></div>
+    <audio id="wrongSound" preload="auto" src="wrong.mp3"></audio>
+    <audio id="winSound" preload="auto" src="win.mp3"></audio>
+    <div id="gameOverVideoContainer">
+      <video id="gameOverVideo" src="gameover.mp4" preload="auto"></video>
+    </div>
+  </div>
+
+  <!-- Prato Fiorito Game -->
+  <div class="tab-content" id="prato-fiorito">
+    <h1 style="color:#b30000;">
+      🧸 Freddy Fazballs 🧸 
+    </h1>
+    <div style="font-size:2em; margin-bottom: 10px;">
+      🧸🦊🐰🐔
+    </div>
+    <div class="grid" id="pratoGameGrid"></div>
+    <div id="pratoMessage" style="margin-top:18px; font-size:1.1em; color:#5a2e8a; min-height:30px; background:#e8f0fe; border-radius:8px; padding:10px 0; box-shadow:0 1px 6px #b8d8f855;">
+      🧁 I was actually coming out here to pick up 🧁 a cupcake... 
+    </div>
+    <audio id="pratoWrongSound" preload="auto" src="wrong.mp3"></audio>
+    <audio id="pratoWinSound" preload="auto" src="win.mp3"></audio>
+    <div id="pratoGameOverVideoContainer" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.9);display:none;justify-content:center;align-items:center;z-index:9999;">
+      <video id="pratoGameOverVideo" preload="auto" style="max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 0 30px #000;background:black;"></video>
+    </div>
+  </div>
+
+  <script>
+    function acceptEULA() {
+      document.getElementById("eulaPopup").style.display = "none";
+    }
+    function showTab(tabId) {
+      const tabs = document.querySelectorAll('.tab-btn');
+      const contents = document.querySelectorAll('.tab-content');
+      tabs.forEach((btn, idx) => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
+      contents.forEach(tab => tab.classList.remove('active'));
+      if(tabId === 'romantic-message') {
+        tabs[0].classList.add('active');
+        tabs[0].setAttribute('aria-selected', 'true');
+      } else if(tabId === 'find-heart') {
+        tabs[1].classList.add('active');
+        tabs[1].setAttribute('aria-selected', 'true');
+        initGame();
+      } else if(tabId === 'prato-fiorito') {
+        tabs[2].classList.add('active');
+        tabs[2].setAttribute('aria-selected', 'true');
+        initPratoGame();
+      }
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    // Sweet messages (English/German)
+    const messages = [
+      { en: "I love your smile. ❤️", de: "Ich liebe dein Lächeln. ❤️" },
+      { en: "You are my favorite person. ❤️", de: "Du bist mein Lieblingsmensch. ❤️" },
+      { en: "Every day with you is special. ❤️", de: "Jeder Tag mit dir ist besonders. ❤️" },
+      { en: "You make my heart happy. ❤️", de: "Du machst mein Herz glücklich. ❤️" },
+      { en: "I can't stop thinking about you. ❤️", de: "Ich kann nicht aufhören, an dich zu denken. ❤️" },
+      { en: "You're all I need. ❤️", de: "Du bist alles, was ich brauche. ❤️" },
+      { en: "You complete me. ❤️", de: "Du vervollständigst mich. ❤️" },
+      { en: "My heart belongs to you. ❤️", de: "Mein Herz gehört dir. ❤️" },
+      { en: "You are my everything. ❤️", de: "Du bist mein Ein und Alles. ❤️" },
+      { en: "Your voice is my favorite sound. ❤️", de: "Deine Stimme ist mein Lieblingsklang. ❤️" },
+      { en: "You make me feel safe. ❤️", de: "Bei dir fühle ich mich sicher. ❤️" },
+      { en: "You are the reason I smile. ❤️", de: "Du bist der Grund, warum ich lächle. ❤️" },
+      { en: "I love the way you look at me. ❤️", de: "Ich liebe, wie du mich ansiehst. ❤️" },
+      { en: "You're my happy place. ❤️", de: "Du bist mein Wohlfühlort. ❤️" },
+      { en: "You are my light in the dark. ❤️", de: "Du bist mein Licht in der Dunkelheit. ❤️" },
+      { en: "I feel lucky to have you. ❤️", de: "Ich habe Glück, dich zu haben. ❤️" },
+      { en: "You're my dream come true. ❤️", de: "Du bist mein wahr gewordener Traum. ❤️" },
+      { en: "You're the best part of my day. ❤️", de: "Du bist das Beste an meinem Tag. ❤️" },
+      { en: "I want to be with you forever. ❤️", de: "Ich will für immer mit dir zusammen sein. ❤️" },
+      { en: "You make my life better. ❤️", de: "Du machst mein Leben besser. ❤️" },
+      { en: "I adore you. ❤️", de: "Ich verehre dich. ❤️" },
+      { en: "You're the love of my life. ❤️", de: "Du bist die Liebe meines Lebens. ❤️" },
+      { en: "You're so special to me. ❤️", de: "Du bist so besonders für mich. ❤️" },
+      { en: "I love being near you. ❤️", de: "Ich liebe es, in deiner Nähe zu sein. ❤️" },
+      { en: "You make me laugh like no one else. ❤️", de: "Du bringst mich zum Lachen wie niemand sonst. ❤️" },
+      { en: "You are my favorite hello and hardest goodbye. ❤️", de: "Du bist mein liebstes Hallo und mein schwerster Abschied. ❤️" },
+      { en: "You bring light into my life. ❤️", de: "Du bringst Licht in mein Leben. ❤️" },
+      { en: "I miss you even when you're near. ❤️", de: "Ich vermisse dich, selbst wenn du nah bist. ❤️" },
+      { en: "You're everything I ever wanted. ❤️", de: "Du bist alles, was ich je wollte. ❤️" },
+      { en: "You make me believe in love. ❤️", de: "Du lässt mich an die Liebe glauben. ❤️" },
+      { en: "Being with you feels like home. ❤️", de: "Mit dir zu sein fühlt sich wie Zuhause an. ❤️" },
+      { en: "I want to make you happy every day. ❤️", de: "Ich möchte dich jeden Tag glücklich machen. ❤️" },
+      { en: "You're my one and only. ❤️", de: "Du bist mein Ein und Alles. ❤️" },
+      { en: "I'm proud to love you. ❤️", de: "Ich bin stolz, dich zu lieben. ❤️" },
+      { en: "I love your laugh. ❤️", de: "Ich liebe dein Lachen. ❤️" },
+      { en: "You're perfect to me. ❤️", de: "Du bist perfekt für mich. ❤️" },
+      { en: "I'm yours, always. ❤️", de: "Ich gehöre dir, für immer. ❤️" },
+      { en: "You're the reason my heart beats. ❤️", de: "Du bist der Grund, warum mein Herz schlägt. ❤️" },
+      { en: "You and me, always. ❤️", de: "Du und ich, für immer. ❤️" },
+      { en: "You're my sweet escape. ❤️", de: "Du bist meine süße Zuflucht. ❤️" },
+      { en: "I love the way you love me. ❤️", de: "Ich liebe, wie du mich liebst. ❤️" },
+      { en: "You're the one I want to wake up next to. ❤️", de: "Du bist der Mensch, neben dem ich aufwachen möchte. ❤️" },
+      { en: "You're my forever. ❤️", de: "Du bist mein Für-immer. ❤️" },
+      { en: "Just thinking of you makes me smile. ❤️", de: "Schon der Gedanke an dich bringt mich zum Lächeln. ❤️" },
+      { en: "You are precious to me. ❤️", de: "Du bist mir sehr wertvoll. ❤️" },
+      { en: "My heart is full of you. ❤️", de: "Mein Herz ist voller Liebe für dich. ❤️" },
+      { en: "I love spending time with you. ❤️", de: "Ich liebe es, Zeit mit dir zu verbringen. ❤️" },
+      { en: "You're everything good in my life. ❤️", de: "Du bist alles Gute in meinem Leben. ❤️" },
+      { en: "You are my sunshine on a cloudy day. ❤️", de: "Du bist mein Sonnenschein an grauen Tagen. ❤️" },
+      { en: "With you, every moment is magical. ❤️", de: "Mit dir ist jeder Moment magisch. ❤️" },
+      { en: "I fall in love with you more every day. ❤️", de: "Ich verliebe mich jeden Tag mehr in dich. ❤️" },
+      { en: "You make my world brighter. ❤️", de: "Du machst meine Welt heller. ❤️" },
+      { en: "I cherish every memory with you. ❤️", de: "Ich schätze jede Erinnerung mit dir. ❤️" },
+      { en: "You are my best friend and my love. ❤️", de: "Du bist mein bester Freund und meine Liebe. ❤️" },
+      { en: "My favorite place is next to you. ❤️", de: "Mein Lieblingsplatz ist neben dir. ❤️" },
+      { en: "You are the sweetest part of my life. ❤️", de: "Du bist das Süßeste in meinem Leben. ❤️" },
+      { en: "I love you more than words can say. ❤️", de: "Ich liebe dich mehr, als Worte sagen können. ❤️" },
+      { en: "You are my heart. ❤️", de: "Du bist mein Herz. ❤️" }
+    ];
+    let currentIndex = null;
+    function generateMessage() {
+      const index = Math.floor(Math.random() * messages.length);
+      currentIndex = index;
+      document.querySelector("#romantic-message #message").textContent = messages[index].en;
+    }
+    function translateMessage() {
+      if (currentIndex !== null) {
+        document.querySelector("#romantic-message #message").textContent = messages[currentIndex].de;
+      }
+    }
+
+    // Find the Heart Game logic
+    const totalBoxes = 16;
+    const maxAttempts = 9;
+    let attemptsLeft;
+    let heartIndex;
+    const grid = document.getElementById("gameGrid");
+    const gameMessage = document.querySelector("#find-heart #gameMessage");
+    const attemptsDisplay = document.getElementById("attempts");
+    const wrongSound = document.getElementById("wrongSound");
+    const winSound = document.getElementById("winSound");
+    const gameOverVideoContainer = document.getElementById("gameOverVideoContainer");
+    const gameOverVideo = document.getElementById("gameOverVideo");
+    const wrongImgURL = "https://pbs.twimg.com/media/EQRs5SkXkAAJ1py.jpg";
+    function initGame() {
+      attemptsLeft = maxAttempts;
+      attemptsDisplay.textContent = `Attempts left: ${attemptsLeft}`;
+      gameMessage.textContent = "";
+      gameOverVideoContainer.style.display = "none";
+      gameOverVideo.pause();
+      gameOverVideo.currentTime = 0;
+      grid.innerHTML = "";
+      heartIndex = Math.floor(Math.random() * totalBoxes);
+      for (let i = 0; i < totalBoxes; i++) {
+        const box = document.createElement("div");
+        box.classList.add("box");
+        box.dataset.index = i;
+        box.style.backgroundImage = "";
+        box.textContent = "";
+        box.style.pointerEvents = "auto";
+        box.classList.remove("clicked");
+        box.setAttribute("tabindex", "0");
+        box.setAttribute("aria-label", "Box");
+        box.addEventListener("click", () => handleBoxClick(i, box));
+        box.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleBoxClick(i, box);
+          }
+        });
+        grid.appendChild(box);
+      }
+    }
+    function handleBoxClick(i, box) {
+      if (attemptsLeft <= 0) return;
+      if (i === heartIndex) {
+        box.innerHTML = "❤️";
+        gameMessage.innerHTML = "You found my heart, and it's all yours, Noah 💌";
+        attemptsDisplay.textContent = "";
+        disableAllBoxes();
+        playWinSound();
+      } else {
+        if (!box.classList.contains("clicked")) {
+          attemptsLeft--;
+          attemptsDisplay.textContent = `Attempts left: ${attemptsLeft}`;
+          box.style.backgroundImage = `url(${wrongImgURL})`;
+          box.style.backgroundSize = "cover";
+          box.style.backgroundPosition = "center";
+          box.textContent = "";
+          box.classList.add("clicked");
+          box.style.pointerEvents = "none";
+          if (attemptsLeft > 0) {
+            wrongSound.currentTime = 0;
+            wrongSound.play();
+          } else {
+            gameMessage.textContent = "Game over! No attempts left 😢";
+            disableAllBoxes();
+            showGameOverVideo();
+          }
+        }
+      }
+    }
+    function disableAllBoxes() {
+      const boxes = document.querySelectorAll("#find-heart .box");
+      boxes.forEach(box => (box.style.pointerEvents = "none"));
+    }
+    function playWinSound() {
+      if (winSound.src) {
+        winSound.currentTime = 0;
+        winSound.play();
+      }
+    }
+    function showGameOverVideo() {
+      gameOverVideoContainer.style.display = "flex";
+      gameOverVideo.play();
+    }
+    gameOverVideo.addEventListener("play", () => {
+      document.getElementById("countdown-timer").style.display = "none";
+    });
+    gameOverVideo.addEventListener("ended", () => {
+      document.getElementById("countdown-timer").style.display = "";
+      gameOverVideoContainer.style.display = "none";
+      initGame();
+    });
+
+    // --- Prato Fiorito Game ---
+    const pratoTotalBoxes = 16;
+    const pratoTotalBombs = 4;
+    let pratoHeartIndex;
+    let pratoBombIndexes = [];
+
+    const pratoGrid = document.getElementById("pratoGameGrid");
+    const pratoMessage = document.getElementById("pratoMessage");
+    const pratoWrongSound = document.getElementById("pratoWrongSound");
+    const pratoWinSound = document.getElementById("pratoWinSound");
+    const pratoGameOverVideoContainer = document.getElementById("pratoGameOverVideoContainer");
+    const pratoGameOverVideo = document.getElementById("pratoGameOverVideo");
+
+    function pratoGetRandomIndexes(exclude, count) {
+      const indexes = [];
+      while (indexes.length < count) {
+        const rnd = Math.floor(Math.random() * pratoTotalBoxes);
+        if (!exclude.includes(rnd) && !indexes.includes(rnd)) {
+          indexes.push(rnd);
+        }
+      }
+      return indexes;
+    }
+
+    function initPratoGame() {
+      pratoGameOverVideoContainer.style.display = "none";
+      pratoGameOverVideo.pause();
+      pratoGameOverVideo.currentTime = 0;
+
+      pratoGrid.innerHTML = "";
+
+      pratoHeartIndex = Math.floor(Math.random() * pratoTotalBoxes);
+
+      pratoBombIndexes = [];
+      for (let i = 0; i < pratoTotalBoxes; i++) {
+        if (i === pratoHeartIndex) continue;
+        if (pratoBombIndexes.length < pratoTotalBombs && Math.random() < 0.25) {
+          pratoBombIndexes.push(i);
+        }
+      }
+      if (pratoBombIndexes.length > pratoTotalBombs) {
+        pratoBombIndexes = pratoBombIndexes.slice(0, pratoTotalBombs);
+      }
+      if (pratoBombIndexes.length === 0) {
+        let possible = [];
+        for (let i = 0; i < pratoTotalBoxes; i++) {
+          if (i !== pratoHeartIndex) possible.push(i);
+        }
+        const randomIdx = possible[Math.floor(Math.random() * possible.length)];
+        pratoBombIndexes.push(randomIdx);
+      }
+
+      const revealed = Array(pratoTotalBoxes).fill(false);
+
+      for (let i = 0; i < pratoTotalBoxes; i++) {
+        const box = document.createElement("div");
+        box.classList.add("box");
+        box.dataset.index = i;
+
+        box.addEventListener("click", () => {
+          if (box.classList.contains("clicked")) return;
+
+          if (parseInt(box.dataset.index) === pratoHeartIndex) {
+            box.textContent = "🧁";
+            box.style.backgroundColor = "#ffe6fa";
+            pratoPlayWinSound();
+            pratoDisableAllBoxes();
+            setTimeout(() => {
+              pratoShowWinnerVideo();
+            }, 1000);
+          } else if (pratoBombIndexes.includes(parseInt(box.dataset.index))) {
+            const bombNumber = pratoBombIndexes.indexOf(parseInt(box.dataset.index)) + 1;
+            box.textContent = "💣" + bombNumber;
+            box.style.backgroundColor = "#22223b";
+            pratoDisableAllBoxes();
+            pratoShowGameOverVideo(bombNumber);
+          } else {
+            pratoRevealSafe(i);
+          }
+        });
+
+        pratoGrid.appendChild(box);
+      }
+
+      function pratoRevealSafe(idx) {
+        const box = pratoGrid.children[idx];
+        if (!box || box.classList.contains("clicked") || revealed[idx]) return;
+        if (pratoBombIndexes.includes(idx) || idx === pratoHeartIndex) return;
+
+        box.classList.add("clicked");
+        box.style.pointerEvents = "none";
+        box.style.backgroundColor = "#c7bfff";
+        box.textContent = "";
+
+        revealed[idx] = true;
+
+        const row = Math.floor(idx / 4);
+        const col = idx % 4;
+
+        const directions = [
+          [-1, 0],
+          [1, 0],
+          [0, -1],
+          [0, 1]
+        ];
+
+        for (const [dr, dc] of directions) {
+          const r = row + dr, c = col + dc;
+          if (r >= 0 && r < 4 && c >= 0 && c < 4) {
+            const nIdx = r * 4 + c;
+            if (!pratoBombIndexes.includes(nIdx) && nIdx !== pratoHeartIndex) {
+              const adjBox = pratoGrid.children[nIdx];
+              if (!adjBox.classList.contains("clicked") && !revealed[nIdx]) {
+                adjBox.classList.add("clicked");
+                adjBox.style.pointerEvents = "none";
+                adjBox.style.backgroundColor = "#c7bfff";
+                adjBox.textContent = "";
+                revealed[nIdx] = true;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    function pratoDisableAllBoxes() {
+      const boxes = pratoGrid.querySelectorAll(".box");
+      boxes.forEach(box => (box.style.pointerEvents = "none"));
+    }
+
+    function pratoPlayWinSound() {
+      if (pratoWinSound.src) {
+        pratoWinSound.currentTime = 0;
+        pratoWinSound.play();
+      }
+    }
+
+    function pratoShowGameOverVideo(bombNumber) {
+      pratoGameOverVideo.src = bombNumber + ".mp4";
+      pratoGameOverVideoContainer.style.display = "flex";
+      pratoGameOverVideo.play();
+    }
+
+    function pratoShowWinnerVideo() {
+      pratoGameOverVideo.src = "winner.mp4";
+      pratoGameOverVideoContainer.style.display = "flex";
+      pratoGameOverVideo.play();
+    }
+
+    pratoGameOverVideo.addEventListener("play", () => {
+      document.getElementById("countdown-timer").style.display = "none";
+    });
+    pratoGameOverVideo.addEventListener("ended", () => {
+      document.getElementById("countdown-timer").style.display = "";
+      pratoGameOverVideoContainer.style.display = "none";
+      initPratoGame();
+    });
+
+    // Countdown Timer to 14th of each month
+    function updateCountdown() {
+      const now = new Date();
+      let year = now.getFullYear();
+      let month = now.getMonth();
+      let target = new Date(year, month, 14, 0, 0, 0, 0);
+      if (now > target) {
+        // If today is after the 14th, go to next month
+        if (month === 11) {
+          year += 1;
+          month = 0;
+        } else {
+          month += 1;
+        }
+        target = new Date(year, month, 14, 0, 0, 0, 0);
+      }
+      const diff = target - now;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      const timerDiv = document.getElementById('countdown-timer');
+      // Remove "days" label, compact, no extra space
+      timerDiv.innerHTML =
+        `<span style="color:#fff;">${days}</span><span style="color:#e3f0fc;">:</span>`
+        + `<span style="color:#fff;">${hours.toString().padStart(2, '0')}</span><span style="color:#e3f0fc;">:</span>`
+        + `<span style="color:#fff;">${minutes.toString().padStart(2, '0')}</span><span style="color:#e3f0fc;">:</span>`
+        + `<span style="color:#fff;">${seconds.toString().padStart(2, '0')}</span> <span style="color:#e3f0fc;font-weight:normal;">Left</span>`;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.tab-btn');
+      if (tabs[1].classList.contains('active')) {
+        initGame();
+      } else if (tabs[2] && tabs[2].classList.contains('active')) {
+        initPratoGame();
+      }
+    });
+
+    function showSilly() {
+      const overlay = document.getElementById('silly-overlay');
+      const img = document.getElementById('silly-img');
+      const boing = document.getElementById('boing-audio');
+      const boing1 = document.getElementById('boing1-audio');
+      overlay.style.display = 'block';
+
+      // Reset silly image to initial state for repeated use
+      img.style.transition = "none";
+      img.style.opacity = "0";
+      img.style.transform = "translate(-50%,-50%) scale(0.1) rotate(-720deg)";
+      img.style.filter = "blur(16px) brightness(2)";
+      // Force reflow for transition reset
+      void img.offsetWidth;
+      img.style.transition = "all 0.7s cubic-bezier(.68,-0.55,.27,1.55), filter 0.7s cubic-bezier(.68,-0.55,.27,1.55)";
+
+      setTimeout(() => {
+        img.style.opacity = '1';
+        img.style.transform = 'translate(-50%,-50%) scale(1.13) rotate(12deg)';
+        img.style.filter = "blur(0px) brightness(1)";
+        boing.currentTime = 0;
+        boing.play();
+        // Silly bounce
+        setTimeout(() => {
+          img.style.transform = 'translate(-50%,-50%) scale(1.05) rotate(-8deg)';
+          setTimeout(() => {
+            img.style.transform = 'translate(-50%,-50%) scale(1.12) rotate(7deg)';
+            setTimeout(() => {
+              img.style.transform = 'translate(-50%,-50%) scale(1.08) rotate(3deg)';
+            }, 120);
+          }, 120);
+        }, 220);
+      }, 50);
+
+      document.body.style.overflow = 'hidden';
+
+      setTimeout(() => {
+        boing1.currentTime = 0;
+        boing1.play();
+        img.style.transform = 'translate(-50%,-50%) scale(0.1) rotate(720deg)';
+        img.style.opacity = '0';
+        img.style.filter = "blur(16px) brightness(2)";
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          document.body.style.overflow = '';
+          img.style.transform = 'translate(-50%,-50%) scale(0.1) rotate(-720deg)';
+        }, 700);
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
