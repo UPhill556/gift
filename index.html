@@ -254,20 +254,98 @@
       background: #000;
     }
     @media (max-width: 600px) {
+      html, body {
+        font-size: 15px;
+        overflow-x: hidden;
+      }
+      body {
+        padding-bottom: 30px;
+      }
+      .tab-buttons {
+        flex-direction: column;
+        gap: 6px;
+        max-width: 98vw;
+        margin: 10px 0 8px 0;
+      }
+      .tab-btn {
+        border-radius: 10px;
+        font-size: 1em;
+        padding: 10px 0;
+        min-width: 0;
+      }
       .tab-content {
-        padding: 10px 2vw 20px 2vw;
+        padding: 8px 2vw 16px 2vw;
+        max-width: 99vw;
+        font-size: 1em;
+      }
+      #romantic-message #message {
+        font-size: 1.1em;
+        padding: 10px;
+        min-height: 40px;
+      }
+      #romantic-message .buttons {
+        flex-direction: column;
+        gap: 8px;
+      }
+      #romantic-message button {
+        font-size: 1em;
+        padding: 10px 0;
+        width: 100%;
       }
       #find-heart .grid, #prato-fiorito .grid {
         grid-template-columns: repeat(4, 1fr);
-        gap: 7px;
+        gap: 5vw;
         max-width: 98vw;
+        margin: 10px auto 0 auto;
       }
       #find-heart .box, #prato-fiorito .box {
-        width: 16vw;
-        height: 16vw;
-        min-width: 48px;
-        min-height: 48px;
-        font-size: 1.5em;
+        width: 18vw;
+        height: 18vw;
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 1.2em;
+        line-height: 1.2em;
+      }
+      #find-heart h1, #prato-fiorito h1 {
+        font-size: 1.1em;
+        margin-bottom: 6px;
+      }
+      #find-heart #gameMessage, #prato-fiorito #pratoMessage {
+        font-size: 1em;
+        padding: 6px 0;
+        min-height: 24px;
+      }
+      #find-heart #attempts {
+        font-size: 0.95em;
+        margin-top: 4px;
+      }
+      #eulaContent {
+        max-width: 98vw !important;
+        padding: 12px 4vw 12px 4vw !important;
+        font-size: 0.98em;
+      }
+      #eulaContent h2 {
+        font-size: 1.1em !important;
+      }
+      #eulaContent button {
+        width: 100%;
+        font-size: 1em;
+        padding: 10px 0;
+      }
+      #find-heart #gameOverVideo, #prato-fiorito #pratoGameOverVideo {
+        max-width: 98vw;
+        max-height: 60vh;
+      }
+      #countdown-timer {
+        top: 8px !important;
+        right: 8px !important;
+        font-size: 0.98em !important;
+        padding: 3px 7px 3px 10px !important;
+        border-radius: 8px !important;
+      }
+      #silly-img {
+        max-width: 98vw !important;
+        max-height: 60vh !important;
       }
     }
   </style>
